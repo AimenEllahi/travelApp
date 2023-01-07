@@ -8,6 +8,7 @@ import LandingPage from "./src/Screens/LandingPage";
 import DetailsScreen from "./src/Screens/DetailsScreen";
 import SignIn from "./src/Screens/SignIn";
 import Payment from "./src/Screens/Payment";
+import SearchScreen from "./src/Screens/SearchScreen";
 
 const Stack = createNativeStackNavigator();
 
@@ -17,8 +18,9 @@ function App() {
       <Stack.Navigator>
         <Stack.Screen name='Home' component={Home} />
         <Stack.Screen name='LandingPage' component={LandingPage} />
-        <Stack.Screen name='SignIn' component={SignIn} />
         <Stack.Screen name='DetailsScreen' component={DetailsScreen} />
+        <Stack.Screen name='SearchScreen' component={SearchScreen} />
+        <Stack.Screen name='SignIn' component={SignIn} />
         <Stack.Screen name='Payment' component={Payment} />
       </Stack.Navigator>
     </NavigationContainer>

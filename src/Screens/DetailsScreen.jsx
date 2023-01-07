@@ -9,13 +9,21 @@ import {
 } from "react-native";
 import Icon from "react-native-vector-icons/MaterialIcons";
 import COLORS from "../consts/colors";
+import places from "../consts/places";
+import { useNavigation } from "@react-navigation/native";
 
-const DetailsScreen = ({ navigation, route }) => {
-  const place = route.params;
+const DetailsScreen = ({ route }) => {
+  const navigation = useNavigation();
+  const details = route.params?.details;
+  const image = route.params?.image;
+  console.log(details);
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: COLORS.white }}>
       <StatusBar translucent backgroundColor='rgba(0,0,0,0)' />
-      <ImageBackground style={{ flex: 0.7 }} source={place.image}>
+      <ImageBackground
+        style={{ flex: 0.7 }}
+        source={{ uri: image?.original.url }}
+      >
         <View style={style.header}>
           <Icon
             name='arrow-back-ios'
@@ -35,14 +43,14 @@ const DetailsScreen = ({ navigation, route }) => {
               marginBottom: 20,
             }}
           >
-            {place.name}
+            {details?.name}
           </Text>
           <View style={{ flexDirection: "row" }}>
             <Icon name='star' size={30} color={COLORS.orange} />
             <Text
               style={{ color: COLORS.white, fontWeight: "bold", fontSize: 20 }}
             >
-              5.0
+              {details?.rating}
             </Text>
           </View>
         </View>
@@ -61,13 +69,15 @@ const DetailsScreen = ({ navigation, route }) => {
               color: COLORS.primary,
             }}
           >
-            {place.location}
+            {details.address_obj.address_string}
           </Text>
         </View>
         <Text style={{ marginTop: 20, fontWeight: "bold", fontSize: 20 }}>
           About the trip
         </Text>
-        <Text style={{ marginTop: 20, lineHeight: 22 }}>{place.details}</Text>
+        <Text style={{ marginTop: 20, lineHeight: 22 }}>
+          {details.description}
+        </Text>
       </View>
       <View style={style.footer}>
         <View style={{ flex: 1, flexDirection: "row", alignItems: "center" }}>
@@ -94,6 +104,7 @@ const DetailsScreen = ({ navigation, route }) => {
         <View style={style.bookNowBtn}>
           <Text
             style={{ color: COLORS.primary, fontSize: 16, fontWeight: "bold" }}
+            onPress={() => navigation.navigate("Payment")}
           >
             Book Now
           </Text>
