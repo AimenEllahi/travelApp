@@ -9,6 +9,7 @@ import {
 import COLORS from "../consts/colors.js";
 import Icon from "react-native-vector-icons/MaterialIcons";
 const { width } = Dimensions.get("screen");
+import TravelApi from "../API/TravelApi.js";
 const RecommendedCard = ({ place }) => {
   return (
     <ImageBackground style={styles.recommendedCardImage} source={place.image}>

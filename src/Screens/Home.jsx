@@ -11,14 +11,15 @@ import {
   TouchableOpacity,
   ScrollView,
 } from "react-native";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Icon from "react-native-vector-icons/MaterialIcons";
 import places from "../consts/places.js";
 import COLORS from "../consts/colors.js";
-import Card from "../Components/Card.jsx";
+import HomeCard from "../Components/HomeCard.jsx";
 import RecommendedCard from "../Components/RecommendedCard.jsx";
 import { useNavigation } from "@react-navigation/native";
 import { ImageBackground } from "react-native-web";
+import TravelApi from "../API/TravelApi.js";
 const { width } = Dimensions.get("screen");
 const CategoryIcons = [
   <Icon name='flight' size={25} color={COLORS.primary} />,
@@ -38,6 +39,31 @@ const ListCategories = () => {
   );
 };
 export default function Home() {
+  //to get data from travel api
+  const [results, setResults] = React.useState();
+  const [errorMessage, setErrorMessage] = React.useState("");
+
+  useEffect(() => {
+    const getPlaces = async () => {
+      try {
+        const response = await TravelApi.get("/search", {
+          params: {
+            key: "C149CE27571A43A7B13FF0EFA9777EB3",
+            searchQuery: "London",
+            language: "en",
+          },
+        });
+        console.log("response", response.data.data);
+        setResults(response.data.data);
+      } catch (err) {
+        console.log(err);
+        setErrorMessage("Something went wrong");
+      }
+    };
+
+    getPlaces();
+  }, []);
+
   const navigation = useNavigation();
   //to get data from travel api
 
@@ -67,14 +93,28 @@ export default function Home() {
         </View>
         <ListCategories />
         <Text style={styles.sectionTitle}>Places</Text>
+
         <View>
-          <FlatList
-            contentContainerStyle={{ paddingLeft: 20 }}
+          <ScrollView
             horizontal
             showsHorizontalScrollIndicator={false}
-            data={places}
-            renderItem={({ item }) => <Card place={item} />}
-          />
+            style={{
+              marginLeft: 20,
+            }}
+          >
+            {results
+              ? results.map((result, index) => {
+                  return (
+                    <HomeCard
+                      key={index}
+                      id={result.location_id}
+                      result={result}
+                    />
+                  );
+                })
+              : null}
+          </ScrollView>
+
           <Text style={styles.sectionTitle}>Recommended</Text>
           <FlatList
             snapToInterval={width - 20}
