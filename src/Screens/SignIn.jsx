@@ -6,19 +6,22 @@ import {
   Text,
   TextInput,
   TouchableOpacity,
+  Alert,
 } from "react-native";
 import { useEffect, useState } from "react";
 import { auth } from "../Firebase/Firebase";
 import Icon from "react-native-vector-icons/FontAwesome";
 import COLORS from "../consts/colors";
+import { useToast } from "react-native-toast-notifications";
 import React from "react";
 
-const userData = { email: "", password: "" };
+const userData = { email: "", password: "", confirmPassword: "" };
 
 export default function SignIn({ navigation }) {
+  const toast = useToast();
   const [user, setUser] = useState(userData);
   const [loggedInUser, setLoggedInUser] = useState();
-  const [isLogin, setIsLogin] = useState(true);
+  const [isLogin, setIsLogin] = useState(false);
   const CategoryIcons = [
     <Icon name='google' size={30} color={COLORS.white} />,
     <Icon name='facebook-square' size={30} color={COLORS.white} />,
@@ -39,21 +42,37 @@ export default function SignIn({ navigation }) {
   const handleRegister = () => {
     console.log("Register");
     console.log(user);
-
+    if (user.password !== user.confirmPassword) {
+      toast.show("Password doesn't match", {
+        type: "danger",
+        placement: "top",
+        duration: 3000,
+      });
+      return;
+    }
     auth
       .createUserWithEmailAndPassword(user.email.trim(), user.password)
       .then((userCredential) => {
         // Signed in
         var user = userCredential.user;
         console.log(user.email);
-        // ...
+        toast.show("Registration Successful", {
+          type: "success",
+          placement: "top",
+          duration: 3000,
+        });
+        setUser(userData);
       })
       .catch((error) => {
         console.log(error);
+        toast.show(error.message, {
+          type: "danger",
+          placement: "top",
+          duration: 3000,
+        });
       });
-    setUser(userData);
   };
-  
+
   const handleLogin = () => {
     console.log("Login");
     setUser(userData);
@@ -62,10 +81,30 @@ export default function SignIn({ navigation }) {
       .then((user) => {
         console.log(user);
         setUser(user);
+        toast.show("Login Successful", {
+          type: "success",
+          placement: "top",
+          duration: 3000,
+        });
       })
       .catch((error) => {
         console.log(error);
+        toast.show("Invalid Email or Password", {
+          type: "danger",
+          placement: "top",
+          duration: 3000,
+        });
       });
+  };
+
+  //to navigate to home screen
+  const handleHome = () => {
+    navigation.navigate("Home");
+  };
+
+  //to manage the login and register
+  const handleSwitch = () => {
+    setIsLogin(!isLogin);
   };
 
   return (
@@ -98,8 +137,21 @@ export default function SignIn({ navigation }) {
               placeholder='Password'
               onChangeText={(text) => setUser({ ...user, password: text })}
               value={user.password}
+              placeholderTextColor={"#fff"}
+              keyboardType='ascii-capable'
               secureTextEntry={true}
             />
+            {!isLogin ? (
+              <TextInput
+                style={style.input}
+                placeholder='Confirm Password'
+                onChangeText={(text) =>
+                  setUser({ ...user, confirmPassword: text })
+                }
+                value={user.confirmPassword}
+                secureTextEntry={true}
+              />
+            ) : null}
           </View>
           <View
             style={{
@@ -109,8 +161,8 @@ export default function SignIn({ navigation }) {
               justifyContent: "space-between",
             }}
           >
-            <Text style={style.forgetPassword}>
-              {isLogin ? "Forget Password?" : "Already have an Account?"}
+            <Text style={style.forgetPassword} onPress={handleSwitch}>
+              {isLogin ? "Create Account" : "Already have an Account"}
             </Text>
 
             <TouchableOpacity

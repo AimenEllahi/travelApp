@@ -20,13 +20,17 @@ import RecommendedCard from "../Components/RecommendedCard.jsx";
 import { useNavigation } from "@react-navigation/native";
 import { ImageBackground } from "react-native-web";
 import TravelApi from "../API/TravelApi.js";
+import { auth } from "../Firebase/Firebase";
+import { useToast } from "react-native-toast-notifications";
 const { width } = Dimensions.get("screen");
+
 const CategoryIcons = [
   <Icon name='flight' size={25} color={COLORS.primary} />,
   <Icon name='beach-access' size={25} color={COLORS.primary} />,
   <Icon name='near-me' size={25} color={COLORS.primary} />,
   <Icon name='place' size={25} color={COLORS.primary} />,
 ];
+
 const ListCategories = () => {
   return (
     <View style={styles.categoryContainer}>
@@ -38,10 +42,44 @@ const ListCategories = () => {
     </View>
   );
 };
+
 export default function Home() {
+  const toast = useToast();
   //to get data from travel api
   const [results, setResults] = React.useState();
   const [errorMessage, setErrorMessage] = React.useState("");
+  const [user, setUser] = useState(null);
+
+  //to handle Logout
+  const handleLogout = () => {
+    auth
+
+      .signOut()
+      .then(() => {
+        // Sign-out successful.
+        console.log("Sign-out successful.");
+        toast.show("You have been successfully logged out", {
+          type: "success",
+          placement: "top",
+          duration: 3000,
+        });
+      })
+      .catch((error) => {
+        // An error happened.
+        console.log(error);
+      });
+  };
+
+  useEffect(() => {
+    auth.onAuthStateChanged((user) => {
+      if (user) {
+        setUser(user);
+        console.log(user);
+      } else {
+        setUser(null);
+      }
+    });
+  });
 
   useEffect(() => {
     const getPlaces = async () => {
@@ -76,10 +114,13 @@ export default function Home() {
       <StatusBar translucent={false} />
       <View style={styles.headerStyle}>
         <Icon name='sort' size={28} color={"white"} />
-        <Icon name='notifications-none' size={28} color={"white"} />
+        <Icon name='logout' size={28} color={"white"} onPress={handleLogout} />
       </View>
       <ScrollView showVerticalScrollIndicator={false}>
         <View style={styles.scrollViewStyle}>
+          <Text style={styles.headerTitle}>
+            Hello, {user?.email.split("@")[0]}
+          </Text>
           <Text style={styles.headerTitle}>Explore the</Text>
           <Text style={styles.headerTitle}>Beautiful places</Text>
 
@@ -116,14 +157,17 @@ export default function Home() {
           </ScrollView>
 
           <Text style={styles.sectionTitle}>Recommended</Text>
-          <FlatList
+          {/* <FlatList
             snapToInterval={width - 20}
             contentContainerStyle={{ paddingLeft: 20, paddingBottom: 20 }}
             showsHorizontalScrollIndicator={false}
             horizontal
-            data={places}
-            renderItem={({ item }) => <RecommendedCard place={item} />}
-          />
+            data={results}
+            renderItem={({ item }) => (
+              <RecommendedCard id={result.location_id} result={result} />
+            )}
+          /> */}
+          <RecommendedCard />
         </View>
       </ScrollView>
     </SafeAreaView>
@@ -145,7 +189,7 @@ const styles = StyleSheet.create({
   },
   headerTitle: {
     fontWeight: "bold",
-    fontSize: 23,
+    fontSize: 20,
     color: "white",
   },
   inputContainer: {
