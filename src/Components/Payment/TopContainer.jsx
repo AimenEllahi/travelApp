@@ -2,16 +2,18 @@ import { View, Text, StyleSheet, Image } from "react-native";
 import React from "react";
 import COLORS from "../../consts/colors.js";
 import Icon from "react-native-vector-icons/MaterialIcons";
-export default function TopContainer() {
+export default function TopContainer({ route }) {
+  const details = route.params?.details;
+  const image = route.params?.image;
   return (
     <View style={styles.topContainer}>
       <Image
         style={styles.cardImage}
-        source={require("../../assets/location1.jpg")}
+        source={{ uri: image?.original.url }}
       ></Image>
       <View style={styles.topDesc}>
         <Text style={{ fontSize: 20, fontWeight: "bold" }}>
-          Lago di Braies, Braies
+          {details?.name}
         </Text>
         <Icon name='location-on' size={25} color={COLORS.primary} />
         <Text
@@ -21,7 +23,7 @@ export default function TopContainer() {
             color: "#474747",
           }}
         >
-          Location Description
+          {details?.address_obj.address_string}
         </Text>
       </View>
     </View>

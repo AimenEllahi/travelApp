@@ -104,7 +104,7 @@ const DetailsScreen = ({ route }) => {
         <View style={style.bookNowBtn}>
           <Text
             style={{ color: COLORS.primary, fontSize: 16, fontWeight: "bold" }}
-            onPress={() => navigation.navigate("Payment")}
+            onPress={() => navigation.navigate("Payment", { details, image })}
           >
             Book Now
           </Text>

@@ -39,19 +39,19 @@ const Card = ({ id }) => {
     getDetails();
   }, []);
 
-  // useEffect(() => {
-  //   const getImage = async () => {
-  //     const response = await TravelApi.get(`/${id}/photos`, {
-  //       params: {
-  //         key: "C149CE27571A43A7B13FF0EFA9777EB3",
-  //         language: "en",
-  //       },
-  //     });
-  //     console.log("response", response.data.data[0].images);
-  //     setImage(response.data.data[0].images);
-  //   };
-  //   getImage();
-  // }, []);
+  useEffect(() => {
+    const getImage = async () => {
+      const response = await TravelApi.get(`/${id}/photos`, {
+        params: {
+          key: "C149CE27571A43A7B13FF0EFA9777EB3",
+          language: "en",
+        },
+      });
+      console.log("response", response.data.data[0].images);
+      setImage(response.data.data[0].images);
+    };
+    getImage();
+  }, []);
 
   return (
     <TouchableOpacity

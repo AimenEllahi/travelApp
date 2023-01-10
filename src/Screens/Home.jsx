@@ -119,7 +119,9 @@ export default function Home() {
       <ScrollView showVerticalScrollIndicator={false}>
         <View style={styles.scrollViewStyle}>
           <Text style={styles.headerTitle}>
-            Hello, {user?.email.split("@")[0]}
+            Hello,{" "}
+            {user?.email.split("@")[0].charAt(0).toUpperCase() +
+              user?.email.split("@")[0].slice(1)}
           </Text>
           <Text style={styles.headerTitle}>Explore the</Text>
           <Text style={styles.headerTitle}>Beautiful places</Text>

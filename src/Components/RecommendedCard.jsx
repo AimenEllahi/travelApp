@@ -14,6 +14,7 @@ const RecommendedCard = () => {
   //to get from specific location id
   const [details, setDetails] = React.useState([]);
   const [errorMessage, setErrorMessage] = React.useState("");
+  const [image, setImage] = React.useState();
 
   useEffect(() => {
     const getDetails = async () => {
@@ -35,8 +36,25 @@ const RecommendedCard = () => {
     getDetails();
   }, []);
 
+  useEffect(() => {
+    const getImage = async () => {
+      const response = await TravelApi.get(`/193108/photos`, {
+        params: {
+          key: "C149CE27571A43A7B13FF0EFA9777EB3",
+          language: "en",
+        },
+      });
+      console.log("response image", response.data.data[0].images);
+      setImage(response.data.data[0].images);
+    };
+    getImage();
+  }, []);
+
   return (
-    <ImageBackground style={styles.recommendedCardImage}>
+    <ImageBackground
+      style={styles.recommendedCardImage}
+      source={{ uri: image?.original.url }}
+    >
       <Text
         style={{
           color: COLORS.white,
@@ -78,9 +96,9 @@ const RecommendedCard = () => {
 
 const styles = StyleSheet.create({
   recommendedCardImage: {
-    width: width - 40,
-    height: 200,
-    marginRight: 20,
+    width: width - 20,
+    height: 300,
+    marginHorizontal: 10,
     borderRadius: 10,
     overflow: "hidden",
     padding: 10,
